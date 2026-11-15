@@ -14,17 +14,13 @@ public class Main {
                 transactionIngestor.getLinesNewMode("data/PS_20174392719_1491204439457_log.csv");
         fim = System.currentTimeMillis();
         IO.println("Tempo em ms novo modo " + (fim - inicio));
-        for (int i = 0; i < 10; i++) {
-            IO.println(linesNewMode.get(i));
-        }
+        linesNewMode.stream().limit(10).forEach(IO::println);
 
         inicio = System.currentTimeMillis();
         List<Transaction> linesOldMode =
                 transactionIngestor.getLinesOldMode("data/PS_20174392719_1491204439457_log.csv");
         fim = System.currentTimeMillis();
         IO.println("Tempo em ms velho modo " + (fim - inicio));
-        for (int i = 0; i < 10; i++) {
-            IO.println(linesOldMode.get(i));
-        }
+        linesOldMode.stream().limit(10).forEach(IO::println);
     }
 }
