@@ -4,13 +4,27 @@ import java.util.List;
 
 
 public class Main {
-    void main(String[] args) throws Exception {
-        TransactionIngestor transactionIngestor = new
-                TransactionIngestor("/home/felipe/proj/modulo1-projeto-zenon-bank/zenon-fraud-detector/zenon-fraud-detector/data/PS_20174392719_1491204439457_log.csv");
+    void main() {
+        TransactionIngestor transactionIngestor = new TransactionIngestor();
+        long inicio = 0;
+        long fim = 0;
 
-        List<Transaction> lines = transactionIngestor.getLines();
+//        inicio = System.currentTimeMillis();
+//        List<Transaction> linesNewMode =
+//                transactionIngestor.getLinesNewMode("data/PS_20174392719_1491204439457_log.csv");
+//        fim = System.currentTimeMillis();
+//        IO.println("Tempo em ms novo modo " + (fim - inicio));
+//        for (int i = 0; i < 10; i++) {
+//            IO.println(linesNewMode.get(i));
+//        }
+
+        inicio = System.currentTimeMillis();
+        List<Transaction> linesOldMode =
+                transactionIngestor.getLinesOldMode("data/PS_20174392719_1491204439457_log.csv");
+        fim = System.currentTimeMillis();
+        IO.println("Tempo em ms velho modo " + (fim - inicio));
         for (int i = 0; i < 10; i++) {
-            IO.println(lines.get(i));
+            IO.println(linesOldMode.get(i));
         }
     }
 }
