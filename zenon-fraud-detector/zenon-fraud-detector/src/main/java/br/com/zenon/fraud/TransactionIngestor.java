@@ -1,12 +1,10 @@
 package br.com.zenon.fraud;
 
-import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.math.BigDecimal;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Scanner;
 
@@ -19,14 +17,7 @@ public class TransactionIngestor {
             List<String> lines = Files.readAllLines(path);
             for (int i = 1; i <= 1000; i++) {
                 String[] lineSplited = lines.get(i).split(",");
-                result.add(new Transaction(
-                        Integer.parseInt(lineSplited[0]),
-                        TransactionType.valueOf(lineSplited[1]),
-                        new BigDecimal(lineSplited[2]),
-                        new TransactionCustomer(lineSplited[3], new BigDecimal(lineSplited[4]), new BigDecimal(lineSplited[5])),
-                        new TransactionCustomer(lineSplited[6], new BigDecimal(lineSplited[7]), new BigDecimal(lineSplited[8])),
-                        Integer.parseInt(lineSplited[9]) == 0 ? Boolean.FALSE : Boolean.TRUE,
-                        Integer.parseInt(lineSplited[10]) == 0 ? Boolean.FALSE : Boolean.TRUE));
+                addToResultList(result, lineSplited);
             }
             return result;
         } catch (Exception ex) {
@@ -39,25 +30,31 @@ public class TransactionIngestor {
         try (FileInputStream fis = new FileInputStream(fileName);
              Scanner scanner = new Scanner(fis)) {
             boolean isFirstLine = true;
-            for (int i = 1; i <= 1000 && scanner.hasNext(); i++) {
+            int count = 0;
+            while (scanner.hasNext() && count < 1000) {
                 String line = scanner.nextLine();
                 if (isFirstLine) {
                     isFirstLine = false;
                     continue;
                 }
                 String[] lineSplited = line.split(",");
-                result.add(new Transaction(
-                        Integer.parseInt(lineSplited[0]),
-                        TransactionType.valueOf(lineSplited[1]),
-                        new BigDecimal(lineSplited[2]),
-                        new TransactionCustomer(lineSplited[3], new BigDecimal(lineSplited[4]), new BigDecimal(lineSplited[5])),
-                        new TransactionCustomer(lineSplited[6], new BigDecimal(lineSplited[7]), new BigDecimal(lineSplited[8])),
-                        Integer.parseInt(lineSplited[9]) == 0 ? Boolean.FALSE : Boolean.TRUE,
-                        Integer.parseInt(lineSplited[10]) == 0 ? Boolean.FALSE : Boolean.TRUE));
+                addToResultList(result, lineSplited);
+                count++;
             }
             return result;
         } catch (Exception ex) {
             throw new RuntimeException(ex);
         }
+    }
+
+    private void addToResultList(List<Transaction> result, String[] splittedLine) {
+        result.add(new Transaction(
+                Integer.parseInt(splittedLine[0]),
+                TransactionType.valueOf(splittedLine[1]),
+                new BigDecimal(splittedLine[2]),
+                new TransactionCustomer(splittedLine[3], new BigDecimal(splittedLine[4]), new BigDecimal(splittedLine[5])),
+                new TransactionCustomer(splittedLine[6], new BigDecimal(splittedLine[7]), new BigDecimal(splittedLine[8])),
+                Integer.parseInt(splittedLine[9]) == 0 ? Boolean.FALSE : Boolean.TRUE,
+                Integer.parseInt(splittedLine[10]) == 0 ? Boolean.FALSE : Boolean.TRUE));
     }
 }
