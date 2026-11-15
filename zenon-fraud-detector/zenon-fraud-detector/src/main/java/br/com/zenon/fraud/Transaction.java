@@ -5,12 +5,8 @@ import java.math.BigDecimal;
 public record Transaction(Integer step,
                           TransactionType type,
                           BigDecimal amount,
-                          String nameOrig,
-                          BigDecimal oldbalanceOrg,
-                          BigDecimal newbalanceOrig,
-                          String nameDest,
-                          BigDecimal oldbalanceDest,
-                          BigDecimal newbalanceDest,
-                          int isFraud,
-                          int isFlaggedFraud) {
+                          TransactionCustomer origin,
+                          TransactionCustomer recipient,
+                          boolean isFraud,
+                          boolean isFlaggedFraud) {
 }
