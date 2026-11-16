@@ -5,17 +5,14 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Logger;
 
 public class TransactionIngestor {
 
-    private final Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
-
-    public List<Optional<Transaction>> getLinesNewMode(String fileName) {
+    public List<Transaction> getLinesNewMode(String fileName) {
         try {
             Path path = Path.of(fileName);
             List<String> lines = Files.readAllLines(path);
-            return lines.stream().skip(1).limit(1000).map(this::createTransaction).toList();
+            return lines.stream().skip(1).limit(1000).map(this::createTransaction).filter(Optional::isPresent).map(Optional::get).toList();
         } catch (Exception ex) {
             throw new RuntimeException("Erro ao ler o arquivo " + fileName, ex);
         }
@@ -31,6 +28,9 @@ public class TransactionIngestor {
 
             TransactionType type = TransactionType.valueOf(Optional.ofNullable(chunks[1]).orElseThrow(() -> new IllegalArgumentException("type should not be null")));
             BigDecimal amount = new BigDecimal(Optional.ofNullable(chunks[2]).orElseThrow(() -> new IllegalArgumentException("amount should not be null")));
+            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+                throw new IllegalArgumentException("amount should be positive: " + amount);
+            }
 
             TransactionCustomer origin = getOrigin(chunks);
             TransactionCustomer recipient = getRecipient(chunks);
@@ -47,30 +47,36 @@ public class TransactionIngestor {
                     isMarkedAsFraud);
             return Optional.of(transaction);
         } catch (NumberFormatException ex) {
-            logger.warning("Erro: " + line + " | " + ex.getClass().getName());
+            System.err.println("Erro: " + line + " | " + ex);
             return Optional.empty();
         } catch (RuntimeException ex) {
             //Logar
-            logger.warning("Erro: " + line + " | " + ex.getMessage());
+            System.err.println("Erro: " + line + " | " + ex);
             return Optional.empty();
         }
     }
 
     private static TransactionCustomer getRecipient(String[] chunks) {
-        String nameRecipient = Optional.ofNullable(chunks[6]).orElseThrow(() -> new IllegalArgumentException("name should not be empty"));
+        String nameRecipient = Optional.ofNullable(chunks[6]).orElseThrow(() -> new IllegalArgumentException("name should not be null"));
+        if (nameRecipient.isEmpty()) {
+            throw new IllegalArgumentException("name should not be empty");
+        }
         BigDecimal oldBalanceRecipient = new BigDecimal(Optional.ofNullable((chunks[7])).orElseThrow(() -> new IllegalArgumentException("oldBalance should not be null")));
         if (oldBalanceRecipient.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("oldBalance should be positive: " + oldBalanceRecipient);
         }
         BigDecimal newBalanceRecipient = new BigDecimal(Optional.ofNullable(chunks[8]).orElseThrow(() -> new IllegalArgumentException("newBalance should not be null")));
         if (newBalanceRecipient.compareTo(BigDecimal.ZERO) < 0) {
-            throw new IllegalArgumentException("oldBalance should be positive: " + newBalanceRecipient);
+            throw new IllegalArgumentException("newBalance should be positive: " + newBalanceRecipient);
         }
         return new TransactionCustomer(nameRecipient, oldBalanceRecipient, newBalanceRecipient);
     }
 
     private static TransactionCustomer getOrigin(String[] chunks) {
-        String nameOrigin = Optional.ofNullable(chunks[3]).orElseThrow(() -> new IllegalArgumentException("name should not be empty"));
+        String nameOrigin = Optional.ofNullable(chunks[3]).orElseThrow(() -> new IllegalArgumentException("name should not be null"));
+        if (nameOrigin.isEmpty()) {
+            throw new IllegalArgumentException("name should not be empty");
+        }
         BigDecimal oldBalanceOrigin = new BigDecimal(Optional.ofNullable(chunks[4]).orElseThrow(() -> new IllegalArgumentException("oldBalance should not be null")));
         if (oldBalanceOrigin.compareTo(BigDecimal.ZERO) < 0) {
             throw new IllegalArgumentException("oldBalance should be positive: " + oldBalanceOrigin);
