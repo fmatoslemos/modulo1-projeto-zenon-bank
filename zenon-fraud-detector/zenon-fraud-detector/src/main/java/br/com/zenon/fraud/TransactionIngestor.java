@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 
 public class TransactionIngestor {
 
-    private Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
+    private final Logger logger = Logger.getLogger(TransactionIngestor.class.getName());
 
     public List<Optional<Transaction>> getLinesNewMode(String fileName) {
         try {
