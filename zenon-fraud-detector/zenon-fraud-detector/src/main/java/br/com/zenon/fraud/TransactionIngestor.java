@@ -8,11 +8,13 @@ import java.util.Optional;
 
 public class TransactionIngestor {
 
-    public List<Transaction> getLinesNewMode(String fileName, int numberOfLines) {
+    public static final int LINE_NUMBERS = 100_000;
+
+    public List<Transaction> getLinesNewMode(String fileName) {
         try {
             Path path = Path.of(fileName);
             List<String> lines = Files.readAllLines(path);
-            return lines.stream().skip(1).limit(numberOfLines).map(this::createTransaction).filter(Optional::isPresent).map(Optional::get).toList();
+            return lines.stream().skip(1).limit(LINE_NUMBERS).map(this::createTransaction).filter(Optional::isPresent).map(Optional::get).toList();
         } catch (Exception ex) {
             throw new RuntimeException("Erro ao ler o arquivo " + fileName, ex);
         }
