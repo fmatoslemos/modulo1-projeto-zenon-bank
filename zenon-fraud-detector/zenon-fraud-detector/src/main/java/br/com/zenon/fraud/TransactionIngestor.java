@@ -28,7 +28,7 @@ public class TransactionIngestor {
 
             TransactionType type = TransactionType.valueOf(Optional.ofNullable(chunks[1]).orElseThrow(() -> new IllegalArgumentException("type should not be null")));
             BigDecimal amount = new BigDecimal(Optional.ofNullable(chunks[2]).orElseThrow(() -> new IllegalArgumentException("amount should not be null")));
-            if (amount.compareTo(BigDecimal.ZERO) < 0) {
+            if (amount.compareTo(BigDecimal.ZERO) <= 0) {
                 throw new IllegalArgumentException("amount should be positive: " + amount);
             }
 
