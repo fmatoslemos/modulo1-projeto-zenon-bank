@@ -38,46 +38,10 @@ public class TransactionReport {
 
     }
 
-    private long getNumberOfLinesFromFile(String fileName) {
-        try (Stream<String> stream = Files.lines(Path.of(fileName))) {
-            return stream.skip(1).
-                    count();
-        } catch (IOException ex) {
-            throw new RuntimeException("Erro ao ler o arquivo " + fileName, ex);
-        }
-    }
-
-    private long getTotalFraudsInFile(String fileName) {
-        try (Stream<String> stream = Files.lines(Path.of(fileName))) {
-            return stream.
-                    skip(1).
-                    map(this::parseReportTransaction).
-                    filter(ReportTransaction::isFraud).
-                    count();
-        } catch (IOException ex) {
-            throw new RuntimeException("Erro ao ler o arquivo " + fileName, ex);
-        }
-    }
-
-    private BigDecimal calculateTotalTransactions(String fileName) {
-        try (Stream<String> stream = Files.lines(Path.of(fileName))) {
-            return stream.
-                    skip(1).
-                    map(this::parseReportTransaction).
-                    map(ReportTransaction::amount).
-                    reduce(BigDecimal.ZERO, BigDecimal::add);
-        } catch (IOException ex) {
-            throw new RuntimeException("Erro ao ler o arquivo " + fileName, ex);
-        }
-    }
-
     private ReportTransaction parseReportTransaction(String line) {
         String[] chunks = line.split(",");
         BigDecimal amount = new BigDecimal(Optional.ofNullable(chunks[2]).orElseThrow(() -> new IllegalArgumentException("amount should not be null")));
         boolean isFraud = chunks[9].equals("1");
-        ReportTransaction transaction = new ReportTransaction(
-                amount,
-                isFraud);
-        return transaction;
+        return new ReportTransaction(amount, isFraud);
     }
 }
