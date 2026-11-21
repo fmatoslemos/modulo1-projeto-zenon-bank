@@ -15,7 +15,7 @@ public class TransactionReport {
 
     public record Statistics(long totalTransactions, long totalFrauds, BigDecimal totalAmount) {
 
-        private static Statistics ZERO = new Statistics(0L, 0L, BigDecimal.ZERO);
+        private static final Statistics ZERO = new Statistics(0L, 0L, BigDecimal.ZERO);
 
         private Statistics addReportTransaction(ReportTransaction reportTransaction) {
             return new Statistics(1 + this.totalTransactions,
