@@ -10,7 +10,7 @@ public class TransactionIngestor {
 
     public static final int LINE_NUMBERS = 100_000;
 
-    public List<Transaction> getLinesNewMode(String fileName) {
+    public List<Transaction> getTransactionsFromFile(String fileName) {
         try {
             Path path = Path.of(fileName);
             List<String> lines = Files.readAllLines(path);
@@ -58,7 +58,7 @@ public class TransactionIngestor {
         }
     }
 
-    private static TransactionCustomer getRecipient(String[] chunks) {
+    private TransactionCustomer getRecipient(String[] chunks) {
         String nameRecipient = Optional.ofNullable(chunks[6]).orElseThrow(() -> new IllegalArgumentException("name should not be null"));
         if (nameRecipient.isEmpty()) {
             throw new IllegalArgumentException("name should not be empty");
@@ -74,7 +74,7 @@ public class TransactionIngestor {
         return new TransactionCustomer(nameRecipient, oldBalanceRecipient, newBalanceRecipient);
     }
 
-    private static TransactionCustomer getOrigin(String[] chunks) {
+    private TransactionCustomer getOrigin(String[] chunks) {
         String nameOrigin = Optional.ofNullable(chunks[3]).orElseThrow(() -> new IllegalArgumentException("name should not be null"));
         if (nameOrigin.isEmpty()) {
             throw new IllegalArgumentException("name should not be empty");

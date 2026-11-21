@@ -18,7 +18,7 @@ public class Main {
         IO.println("----------------------------------------------------------------------------------------------------");
         IO.println("----------------------------------------------------------------------------------------------------");
         IO.println("------------------------------USING FRAUD ANALYZER--------------------------------------------------");
-        FraudAnalyser fraudAnalyser = new FraudAnalyser(transactionIngestor.getLinesNewMode("data/PS_20174392719_1491204439457_log.csv"));
+        FraudAnalyser fraudAnalyser = new FraudAnalyser(transactionIngestor.getTransactionsFromFile("data/PS_20174392719_1491204439457_log.csv"));
         IO.println("1. Total de Fraudes: " + fraudAnalyser.countFrauds());
 
         IO.println("2. Top 3 Fraudes de Maior Valor:");
@@ -37,7 +37,7 @@ public class Main {
         IO.println("----------------------------------------------------------------------------------------------------");
         IO.println("----------------------------------------------------------------------------------------------------");
         IO.println("------------------------------BENCHMARKS------------------------------------------------------------");
-        TransactionRepository transactionListRepository = new TransactionListRepository(transactionIngestor.getLinesNewMode("data/PS_20174392719_1491204439457_log.csv"));
+        TransactionRepository transactionListRepository = new TransactionListRepository(transactionIngestor.getTransactionsFromFile("data/PS_20174392719_1491204439457_log.csv"));
 //        transactionListRepository.findByOriginName("C12345").ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente C12345"));
 //        transactionListRepository.findByOriginName("C1231006815").ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente C1231006815"));
 
@@ -46,7 +46,7 @@ public class Main {
         long endTimeList = System.nanoTime();
         IO.println("Tempo usando Lista " + (endTimeList - startTimeList) / 1_000_000.0 + " ms");
 
-        TransactionRepository transactionMapRepository = new TransactionMapRepository(transactionIngestor.getLinesNewMode("data/PS_20174392719_1491204439457_log.csv"));
+        TransactionRepository transactionMapRepository = new TransactionMapRepository(transactionIngestor.getTransactionsFromFile("data/PS_20174392719_1491204439457_log.csv"));
         long startTimeMap = System.nanoTime();
         transactionMapRepository.findByOriginName("C1868032458").ifPresentOrElse(IO::println, () -> IO.println("Transação não encontrada para o cliente C1868032458"));
         long endTimeMap = System.nanoTime();
