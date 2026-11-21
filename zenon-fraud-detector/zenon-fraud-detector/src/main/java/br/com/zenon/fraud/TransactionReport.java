@@ -14,13 +14,17 @@ public class TransactionReport {
     }
 
     public record Statistics(long totalTransactions, long totalFrauds, BigDecimal totalAmount) {
-         private Statistics addReportTransaction(ReportTransaction reportTransaction) {
-            return new Statistics( 1 + this.totalTransactions,
+
+        private static Statistics ZERO = new Statistics(0L, 0L, BigDecimal.ZERO);
+
+        private Statistics addReportTransaction(ReportTransaction reportTransaction) {
+            return new Statistics(1 + this.totalTransactions,
                     (reportTransaction.isFraud ? 1 : 0) + this.totalFrauds,
                     reportTransaction.amount.add(this.totalAmount));
         }
+
         private Statistics add(Statistics statistics) {
-            return new Statistics( this.totalTransactions + statistics.totalTransactions,
+            return new Statistics(this.totalTransactions + statistics.totalTransactions,
                     this.totalFrauds + statistics.totalFrauds, this.totalAmount.add(statistics.totalAmount));
         }
     }
@@ -31,7 +35,7 @@ public class TransactionReport {
             return stream.
                     skip(1).
                     map(this::parseReportTransaction).
-                    reduce(new Statistics(0L, 0L, BigDecimal.ZERO), Statistics::addReportTransaction, Statistics::add);
+                    reduce(Statistics.ZERO, Statistics::addReportTransaction, Statistics::add);
         } catch (IOException ex) {
             throw new RuntimeException("Erro ao ler o arquivo " + fileName, ex);
         }
